@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:up_todo/core/utils/theme/theme.dart';
+import 'package:up_todo/features/splash/splash.dart';
 
 void main() {
-  const MyApp();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Up Todo',
       debugShowCheckedModeBanner: false,
       theme: TodoAppTheme.darkTheme,
-      home: Container(),
+      home: SplashScreen(),
     );
   }
 }
