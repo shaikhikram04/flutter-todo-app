@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:up_todo/core/utils/colors.dart';
 import 'package:up_todo/features/tasks/presentation/widgets/categories_dialog.dart';
+
+import '../../domain/entities/task.dart';
+import '../bloc/task_bloc.dart';
+import '../bloc/task_event.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -16,7 +20,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   String _selectedCategory = 'University';
   int _selectedPriority = 1;
 
-  final List<String> _categories = ['University', 'Home', 'Work', 'Grocery', 'Health', 'Movie', 'Social', 'Sport'];
+  final List<String> _categories = ['University', 'Home', 'Work'];
+  final List<int> _priorities = [1, 2, 3, 4, 5];
 
   @override
   void dispose() {
@@ -27,21 +32,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   Color _getCategoryColor(String category) {
     switch (category.toLowerCase()) {
       case 'university':
-        return TodoColors.university;
+        return const Color(0xFF8875FF);
       case 'home':
-        return TodoColors.home;
+        return const Color(0xFFFF4757);
       case 'work':
-        return TodoColors.work;
-      case 'grocery':
-        return TodoColors.grocery;
-      case 'health':
-        return TodoColors.health;
-      case 'movie':
-        return TodoColors.movie;
-      case 'social':
-        return TodoColors.social;
-      case 'sport':
-        return TodoColors.sport;
+        return const Color(0xFFFFA726);
       default:
         return const Color(0xFF8875FF);
     }
@@ -170,13 +165,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 const Spacer(),
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      if (_selectedPriority < 5) {
-                        _selectedPriority++;
-                      } else {
-                        _selectedPriority = 1;
-                      }
-                    });
+                    _showPriorityPicker();
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -205,7 +194,21 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (_titleController.text.trim().isNotEmpty) {
+                    final task = Task(
+                      title: _titleController.text.trim(),
+                      category: _selectedCategory,
+                      priority: _selectedPriority,
+                      date: _selectedDate,
+                      isCompleted: false,
+                      createdAt: DateTime.now(),
+                    );
+
+                    context.read<TaskBloc>().add(AddTaskEvent(task));
+                    Navigator.pop(context);
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF8875FF),
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -231,5 +234,52 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   void _showCategoryPicker() {
     CategoryDialog.show(context);
+  }
+
+  void _showPriorityPicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E1E),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Select Priority',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ..._priorities.map((priority) => ListTile(
+                  title: Text(
+                    'Priority $priority',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  leading: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.flag, color: Colors.grey, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        priority.toString(),
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedPriority = priority;
+                    });
+                    Navigator.pop(context);
+                  },
+                )),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:up_todo/core/utils/colors.dart';
-import 'package:up_todo/core/utils/images.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/task_bloc.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/task_state.dart';
 import 'package:up_todo/features/tasks/presentation/screens/add_task_screen.dart';
+import 'package:up_todo/features/tasks/presentation/widgets/no_task.dart';
+import 'package:up_todo/features/tasks/presentation/widgets/task_card.dart';
 
 class TasksScreen extends StatelessWidget {
   const TasksScreen({super.key});
@@ -16,7 +20,58 @@ class TasksScreen extends StatelessWidget {
           child: const Text('Tasks'),
         ),
       ),
-      body: _NoTaskWidget(),
+      body: BlocBuilder<TaskBloc, TaskState>(
+        builder: (context, state) {
+          if (state is TaskLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is TaskLoaded) {
+            if (state.tasks.isEmpty) {
+              return NoTaskWidget();
+            }
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E1E1E),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFF333333)),
+                    ),
+                    child: const TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search for your task...',
+                        hintStyle: TextStyle(color: Colors.grey),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: state.tasks.length,
+                    itemBuilder: (context, index) {
+                      final task = state.tasks[index];
+                      return TaskCard(task: task);
+                    },
+                  ),
+                ),
+              ],
+            );
+          } else if (state is TaskError) {
+            return Center(
+              child: Text(
+                'Error: ${state.message}',
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
+          }
+          return const SizedBox();
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: TodoColors.primary,
         onPressed: () {
@@ -26,40 +81,6 @@ class TasksScreen extends StatelessWidget {
           );
         },
         child: const Icon(Icons.add, color: Colors.white),
-      ),
-    );
-  }
-}
-
-class _NoTaskWidget extends StatelessWidget {
-  const _NoTaskWidget();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              Images.noTask,
-              height: 200,
-            ),
-            const SizedBox(height: 30),
-            Text(
-              'What do you want to do today?',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Tap + to add your tasks',
-              style: Theme.of(context).textTheme.bodySmall,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
       ),
     );
   }
