@@ -6,6 +6,7 @@ class TodoAppBarTheme {
   const TodoAppBarTheme._();
 
   static AppBarTheme darkAppBarTheme = AppBarTheme(
+    toolbarHeight: 60,
     elevation: 0,
     centerTitle: false,
     scrolledUnderElevation: 0,

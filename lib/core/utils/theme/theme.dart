@@ -11,8 +11,6 @@ import 'package:up_todo/core/utils/theme/custom-theme/text_theme.dart';
 class TodoAppTheme {
   const TodoAppTheme._();
 
-
-
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     fontFamily: 'Poppins',

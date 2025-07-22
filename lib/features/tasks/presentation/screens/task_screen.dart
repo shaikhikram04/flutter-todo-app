@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:up_todo/core/utils/colors.dart';
 import 'package:up_todo/core/utils/images.dart';
+import 'package:up_todo/features/tasks/presentation/screens/add_task_screen.dart';
 
 class TasksScreen extends StatelessWidget {
   const TasksScreen({super.key});
@@ -9,15 +11,20 @@ class TasksScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text(
-          'Tasks',
-          style: TextStyle(color: Colors.white),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: const Text('Tasks'),
         ),
       ),
-      body: const _NoTaskWidget(),
+      body: _NoTaskWidget(),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF8875FF),
-        onPressed: () {},
+        backgroundColor: TodoColors.primary,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddTaskScreen()),
+          );
+        },
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -40,21 +47,15 @@ class _NoTaskWidget extends StatelessWidget {
               height: 200,
             ),
             const SizedBox(height: 30),
-            const Text(
+            Text(
               'What do you want to do today?',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
+              style: Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
-            const Text(
+            Text(
               'Tap + to add your tasks',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: Theme.of(context).textTheme.bodySmall,
               textAlign: TextAlign.center,
             ),
           ],

@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Up Todo',
       debugShowCheckedModeBanner: false,
       theme: TodoAppTheme.darkTheme,
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }

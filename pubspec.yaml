@@ -1,59 +1,37 @@
 name: up_todo
 description: "A new Flutter project."
 
-
-publish_to: 'none' 
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
   sdk: ^3.6.0
 
 dependencies:
+  cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
-
-  cupertino_icons: ^1.0.8
+  intl: ^0.20.2
 
 dev_dependencies:
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
 
-
-  flutter_lints: ^5.0.0
-
 flutter:
-
   uses-material-design: true
 
   assets:
     - assets/images/
-    - assets/icons/
-  
-  
-  
+    - assets/fonts/
 
-  
-  
-
-  
-  
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  #
-  
-  
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter_24pt-Regular.ttf
+        - asset: assets/fonts/Inter_24pt-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter_24pt-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Inter_24pt-Light.ttf
+          weight: 300
