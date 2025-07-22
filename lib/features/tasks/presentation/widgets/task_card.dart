@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:up_todo/features/tasks/domain/entities/task.dart';
-import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_bloc.dart';
-import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_event.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/task_bloc.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/task_event.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
