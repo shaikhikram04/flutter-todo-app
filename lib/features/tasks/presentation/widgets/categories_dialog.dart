@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:up_todo/core/utils/constants.dart';
 
 class CategoryDialog extends StatelessWidget {
   final String? selectedCategory;
-  final Function(String) onCategorySelected;
+  final Function(CategoryItem category) onCategorySelected;
 
   const CategoryDialog({
     super.key,
@@ -13,6 +14,7 @@ class CategoryDialog extends StatelessWidget {
   static Future<String?> show(
     BuildContext context, {
     String? selectedCategory,
+    required Function(CategoryItem category) onCategorySelected,
   }) {
     return showDialog<String>(
       context: context,
@@ -20,7 +22,8 @@ class CategoryDialog extends StatelessWidget {
       builder: (context) => CategoryDialog(
         selectedCategory: selectedCategory,
         onCategorySelected: (category) {
-          Navigator.of(context).pop(category);
+          onCategorySelected(category);
+          Navigator.of(context).pop();
         },
       ),
     );
@@ -56,12 +59,12 @@ class CategoryDialog extends StatelessWidget {
               crossAxisSpacing: 12,
               mainAxisSpacing: 16,
               childAspectRatio: 1,
-              children: _categories.map((category) {
+              children: CategoryConstants.categories.map((category) {
                 final isSelected = selectedCategory == category.name;
                 return _CategoryCard(
                   category: category,
                   isSelected: isSelected,
-                  onTap: () => onCategorySelected(category.name),
+                  onTap: () => onCategorySelected(category),
                 );
               }).toList(),
             ),
@@ -133,12 +136,7 @@ class CategoryDialog extends StatelessWidget {
             ),
           ),
           TextButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                Navigator.pop(context);
-                onCategorySelected(controller.text.trim());
-              }
-            },
+            onPressed: () {},
             child: const Text(
               'Add',
               style: TextStyle(color: Color(0xFF8875FF)),
@@ -148,54 +146,6 @@ class CategoryDialog extends StatelessWidget {
       ),
     );
   }
-
-  static final List<CategoryItem> _categories = [
-    CategoryItem(
-      name: 'Grocery',
-      icon: Icons.shopping_cart,
-      color: const Color(0xFF66BB6A), // Green
-    ),
-    CategoryItem(
-      name: 'Work',
-      icon: Icons.work,
-      color: const Color(0xFFEF5350), // Red
-    ),
-    CategoryItem(
-      name: 'Sport',
-      icon: Icons.fitness_center,
-      color: const Color(0xFF42A5F5), // Blue
-    ),
-    CategoryItem(
-      name: 'Home',
-      icon: Icons.home,
-      color: const Color(0xFFE57373), // Light Red
-    ),
-    CategoryItem(
-      name: 'University',
-      icon: Icons.school,
-      color: const Color(0xFF8875FF), // Purple
-    ),
-    CategoryItem(
-      name: 'Social',
-      icon: Icons.people,
-      color: const Color(0xFFAB47BC), // Pink/Purple
-    ),
-    CategoryItem(
-      name: 'Music',
-      icon: Icons.music_note,
-      color: const Color(0xFFBA68C8), // Light Purple
-    ),
-    CategoryItem(
-      name: 'Health',
-      icon: Icons.favorite,
-      color: const Color(0xFF4CAF50), // Green
-    ),
-    CategoryItem(
-      name: 'Movie',
-      icon: Icons.movie,
-      color: const Color(0xFF29B6F6), // Light Blue
-    ),
-  ];
 }
 
 class _CategoryCard extends StatelessWidget {
@@ -252,16 +202,4 @@ class _CategoryCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class CategoryItem {
-  final String name;
-  final IconData icon;
-  final Color color;
-
-  CategoryItem({
-    required this.name,
-    required this.icon,
-    required this.color,
-  });
 }

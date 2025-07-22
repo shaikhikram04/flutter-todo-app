@@ -9,8 +9,8 @@ import 'package:up_todo/features/tasks/domain/usecases/add_task.dart';
 import 'package:up_todo/features/tasks/domain/usecases/delete_task.dart';
 import 'package:up_todo/features/tasks/domain/usecases/get_tasks.dart';
 import 'package:up_todo/features/tasks/domain/usecases/update_task.dart';
-import 'package:up_todo/features/tasks/presentation/bloc/task_bloc.dart';
-import 'package:up_todo/features/tasks/presentation/bloc/task_event.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_bloc.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_event.dart';
 
 void main() {
   runApp(const MyApp());

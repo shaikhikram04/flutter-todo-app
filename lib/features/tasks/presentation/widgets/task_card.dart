@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:up_todo/features/tasks/domain/entities/task.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_bloc.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_event.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
@@ -34,7 +37,9 @@ class TaskCard extends StatelessWidget {
         children: [
           // Checkbox
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              context.read<TaskBloc>().add(ToggleTaskCompletion(task));
+            },
             child: Container(
               width: 24,
               height: 24,
@@ -57,19 +62,14 @@ class TaskCard extends StatelessWidget {
               children: [
                 Text(
                   task.title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+                      ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   DateFormat('dd MMM yyyy').format(task.date),
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
@@ -82,33 +82,52 @@ class TaskCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: _getCategoryColor(task.category),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   task.category,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                  ),
+                  style: Theme.of(context).textTheme.labelLarge,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.flag, color: Colors.grey, size: 12),
+                  const Icon(Icons.flag, color: Colors.grey, size: 16),
                   const SizedBox(width: 2),
                   Text(
                     task.priority.toString(),
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ],
               ),
             ],
           ),
+          const SizedBox(width: 16),
           // Delete button
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Delete Task'),
+                  content: const Text('Are you sure you want to delete this task?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        context.read<TaskBloc>().add(DeleteTaskEvent(task.id!));
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                    ),
+                  ],
+                ),
+              );
+            },
             child: const Padding(
               padding: EdgeInsets.only(left: 8.0),
               child: Icon(Icons.delete, color: Colors.red, size: 20),

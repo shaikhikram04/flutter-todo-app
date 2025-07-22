@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:up_todo/core/utils/colors.dart';
-import 'package:up_todo/features/tasks/presentation/bloc/task_bloc.dart';
-import 'package:up_todo/features/tasks/presentation/bloc/task_state.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_bloc.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_state.dart';
 import 'package:up_todo/features/tasks/presentation/screens/add_task_screen.dart';
 import 'package:up_todo/features/tasks/presentation/widgets/no_task.dart';
 import 'package:up_todo/features/tasks/presentation/widgets/task_card.dart';
@@ -77,7 +77,7 @@ class TasksScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddTaskScreen()),
+            MaterialPageRoute(builder: (context) => AddTaskScreen()),
           );
         },
         child: const Icon(Icons.add, color: Colors.white),
