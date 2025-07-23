@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/task.dart';
+import 'task_event.dart';
 
 abstract class TaskState extends Equatable {
   const TaskState();
@@ -15,12 +16,32 @@ class TaskLoading extends TaskState {}
 class TaskLoaded extends TaskState {
   final List<Task> allTasks;
   final List<Task> filteredTasks;
+  final String searchQuery;
+  final TaskFilter activeFilter;
 
-  const TaskLoaded(this.allTasks, {List<Task>? filtered})
-      : filteredTasks = filtered ?? allTasks;
+  const TaskLoaded(
+      this.allTasks, {
+        List<Task>? filtered,
+        this.searchQuery = '',
+        this.activeFilter = const TaskFilter(),
+      }) : filteredTasks = filtered ?? allTasks;
+
+  TaskLoaded copyWith({
+    List<Task>? allTasks,
+    List<Task>? filteredTasks,
+    String? searchQuery,
+    TaskFilter? activeFilter,
+  }) {
+    return TaskLoaded(
+      allTasks ?? this.allTasks,
+      filtered: filteredTasks ?? this.filteredTasks,
+      searchQuery: searchQuery ?? this.searchQuery,
+      activeFilter: activeFilter ?? this.activeFilter,
+    );
+  }
 
   @override
-  List<Object> get props => [allTasks, filteredTasks];
+  List<Object> get props => [allTasks, filteredTasks, searchQuery, activeFilter];
 }
 
 class TaskError extends TaskState {
@@ -31,6 +52,3 @@ class TaskError extends TaskState {
   @override
   List<Object> get props => [message];
 }
-
-
-
