@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:up_todo/core/utils/constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/utils/constants.dart';
+import '../bloc/category_bloc.dart';
+import '../bloc/category_event.dart';
+import '../bloc/category_state.dart';
 
 class CategoryDialog extends StatelessWidget {
   final String? selectedCategory;
@@ -12,19 +17,22 @@ class CategoryDialog extends StatelessWidget {
   });
 
   static Future<String?> show(
-    BuildContext context, {
-    String? selectedCategory,
-    required Function(CategoryItem category) onCategorySelected,
-  }) {
+      BuildContext context, {
+        String? selectedCategory,
+        required Function(CategoryItem category) onCategorySelected,
+      }) {
     return showDialog<String>(
       context: context,
       barrierColor: Colors.black.withOpacity(0.7),
-      builder: (context) => CategoryDialog(
-        selectedCategory: selectedCategory,
-        onCategorySelected: (category) {
-          onCategorySelected(category);
-          Navigator.of(context).pop();
-        },
+      builder: (context) => BlocProvider(
+        create: (context) => CategoryBloc()..add(LoadCategories()),
+        child: CategoryDialog(
+          selectedCategory: selectedCategory,
+          onCategorySelected: (category) {
+            onCategorySelected(category);
+            Navigator.of(context).pop();
+          },
+        ),
       ),
     );
   }
@@ -52,21 +60,60 @@ class CategoryDialog extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Category Grid
-            GridView.count(
-              crossAxisCount: 3,
-              shrinkWrap: true,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1,
-              children: CategoryConstants.categories.map((category) {
-                final isSelected = selectedCategory == category.name;
-                return _CategoryCard(
-                  category: category,
-                  isSelected: isSelected,
-                  onTap: () => onCategorySelected(category),
+            // Category Grid with BLoC
+            BlocConsumer<CategoryBloc, CategoryState>(
+              listener: (context, state) {
+                if (state is CategoryError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+                if (state is CategoryAdded) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Category "${state.addedCategory.name}" added successfully!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              },
+              builder: (context, state) {
+                if (state is CategoryLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF8875FF),
+                    ),
+                  );
+                }
+
+                if (state is CategoryLoaded) {
+                  return GridView.count(
+                    crossAxisCount: 3,
+                    shrinkWrap: true,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 1,
+                    children: state.categories.map((category) {
+                      final isSelected = selectedCategory == category.name;
+                      return _CategoryCard(
+                        category: category,
+                        isSelected: isSelected,
+                        onTap: () => onCategorySelected(category),
+                      );
+                    }).toList(),
+                  );
+                }
+
+                return const Center(
+                  child: Text(
+                    'No categories available',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 );
-              }).toList(),
+              },
             ),
 
             const SizedBox(height: 16),
@@ -76,7 +123,6 @@ class CategoryDialog extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Handle add custom category
                   _showAddCategoryDialog(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -104,45 +150,125 @@ class CategoryDialog extends StatelessWidget {
 
   void _showAddCategoryDialog(BuildContext context) {
     final TextEditingController controller = TextEditingController();
+    IconData selectedIcon = Icons.category;
+    Color selectedColor = const Color(0xFF8875FF);
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
-        title: const Text(
-          'Add Custom Category',
-          style: TextStyle(color: Colors.white),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          backgroundColor: const Color(0xFF1E1E1E),
+          title: const Text(
+            'Add Custom Category',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Category Name Input
+              TextField(
+                controller: controller,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  hintText: 'Enter category name',
+                  hintStyle: TextStyle(color: Colors.grey),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF8875FF)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Icon Selection
+              const Text(
+                'Choose Icon:',
+                style: TextStyle(color: Colors.white, fontSize: 14),
+              ),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                children: [
+                  Icons.category,
+                  Icons.star,
+                  Icons.bookmark,
+                  Icons.lightbulb,
+                  Icons.celebration,
+                ].map((icon) => GestureDetector(
+                  onTap: () => setState(() => selectedIcon = icon),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: selectedIcon == icon ? selectedColor : Colors.grey.shade800,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(icon, color: Colors.white, size: 20),
+                  ),
+                )).toList(),
+              ),
+              const SizedBox(height: 20),
+
+              // Color Selection
+              const Text(
+                'Choose Color:',
+                style: TextStyle(color: Colors.white, fontSize: 14),
+              ),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                children: [
+                  const Color(0xFF8875FF),
+                  const Color(0xFF66BB6A),
+                  const Color(0xFFEF5350),
+                  const Color(0xFF42A5F5),
+                  const Color(0xFFAB47BC),
+                ].map((color) => GestureDetector(
+                  onTap: () => setState(() => selectedColor = color),
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: selectedColor == color
+                          ? Border.all(color: Colors.white, width: 2)
+                          : null,
+                    ),
+                  ),
+                )).toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                if (controller.text.trim().isNotEmpty) {
+                  context.read<CategoryBloc>().add(
+                    AddCategory(
+                      name: controller.text.trim(),
+                      icon: selectedIcon,
+                      color: selectedColor,
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text(
+                'Add',
+                style: TextStyle(color: Color(0xFF8875FF)),
+              ),
+            ),
+          ],
         ),
-        content: TextField(
-          controller: controller,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
-            hintText: 'Enter category name',
-            hintStyle: TextStyle(color: Colors.grey),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF8875FF)),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Colors.grey),
-            ),
-          ),
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              'Add',
-              style: TextStyle(color: Color(0xFF8875FF)),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -171,12 +297,12 @@ class _CategoryCard extends StatelessWidget {
           border: isSelected ? Border.all(color: Colors.white, width: 3) : null,
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: category.color.withOpacity(0.4),
-                    blurRadius: 8,
-                    spreadRadius: 2,
-                  ),
-                ]
+            BoxShadow(
+              color: category.color.withOpacity(0.4),
+              blurRadius: 8,
+              spreadRadius: 2,
+            ),
+          ]
               : null,
         ),
         child: Column(
