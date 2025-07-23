@@ -71,14 +71,6 @@ class CategoryDialog extends StatelessWidget {
                     ),
                   );
                 }
-                if (state is CategoryAdded) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Category "${state.addedCategory.name}" added successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                }
               },
               builder: (context, state) {
                 if (state is CategoryLoading) {
@@ -155,8 +147,8 @@ class CategoryDialog extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (builderContext, setState) => AlertDialog(
           backgroundColor: const Color(0xFF1E1E1E),
           title: const Text(
             'Add Custom Category',
@@ -243,7 +235,7 @@ class CategoryDialog extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text(
                 'Cancel',
                 style: TextStyle(color: Colors.grey),
@@ -251,15 +243,25 @@ class CategoryDialog extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                if (controller.text.trim().isNotEmpty) {
+                final categoryName = controller.text.trim();
+                if (categoryName.isNotEmpty) {
+                  // Use the original context (from the CategoryDialog) to access the BLoC
                   context.read<CategoryBloc>().add(
                     AddCategory(
-                      name: controller.text.trim(),
+                      name: categoryName,
                       icon: selectedIcon,
                       color: selectedColor,
                     ),
                   );
-                  Navigator.pop(context);
+                  Navigator.pop(dialogContext);
+                } else {
+                  // Show error for empty name
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter a category name'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
                 }
               },
               child: const Text(

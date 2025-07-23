@@ -17,7 +17,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
   Future<List<TaskModel>> getTasks() async {
     final db = await databaseHelper.database;
     final List<Map<String, dynamic>> maps = await db.query(
-      DatabaseHelper.tableName,
+      DatabaseHelper.tasksTableName,
       orderBy: 'createdAt DESC',
     );
 
@@ -27,14 +27,14 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
   @override
   Future<int> addTask(TaskModel task) async {
     final db = await databaseHelper.database;
-    return await db.insert(DatabaseHelper.tableName, task.toMap());
+    return await db.insert(DatabaseHelper.tasksTableName, task.toMap());
   }
 
   @override
   Future<int> updateTask(TaskModel task) async {
     final db = await databaseHelper.database;
     return await db.update(
-      DatabaseHelper.tableName,
+      DatabaseHelper.tasksTableName,
       task.toMap(),
       where: 'id = ?',
       whereArgs: [task.id],
@@ -45,7 +45,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
   Future<int> deleteTask(int id) async {
     final db = await databaseHelper.database;
     return await db.delete(
-      DatabaseHelper.tableName,
+      DatabaseHelper.tasksTableName,
       where: 'id = ?',
       whereArgs: [id],
     );
