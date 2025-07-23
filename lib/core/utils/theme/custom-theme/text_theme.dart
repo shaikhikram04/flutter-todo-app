@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:up_todo/core/utils/colors.dart';
 
 class TodoTextTheme {
   const TodoTextTheme._();
@@ -9,49 +10,49 @@ class TodoTextTheme {
     headlineLarge: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 32,
-      color: Colors.white,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.bold,
     ),
     headlineMedium: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 24,
-      color: Colors.white,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.w600,
     ),
     headlineSmall: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 18,
-      color: Colors.white,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.w600,
     ),
     titleLarge: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 16,
-      color: Colors.white,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.w600,
     ),
     titleMedium: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 16,
-      color: Colors.white,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.w500,
     ),
     titleSmall: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 16,
-      color: Colors.white,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.w400,
     ),
     bodyLarge: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 14,
-      color: Colors.white,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.w500,
     ),
     bodyMedium: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 14,
-      color: Colors.white,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.normal,
     ),
     bodySmall: TextStyle(
@@ -63,13 +64,13 @@ class TodoTextTheme {
     labelLarge: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 12,
-      color: Colors.white,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.w500,
     ),
     labelMedium: TextStyle(
       fontFamily: _fontFamily,
       fontSize: 12,
-      color: Colors.white54,
+      color: TodoColors.textPrimary,
       fontWeight: FontWeight.normal,
     ),
   );

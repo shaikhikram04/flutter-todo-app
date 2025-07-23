@@ -17,7 +17,7 @@ class TasksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: TodoColors.black,
       appBar: AppBar(
         title: const Padding(
           padding: EdgeInsets.only(top: 8.0),
@@ -94,7 +94,7 @@ class TasksScreen extends StatelessWidget {
             return Center(
               child: Text(
                 'Error: ${state.message}',
-                style: const TextStyle(color: Colors.red),
+                style: const TextStyle(color: TodoColors.error),
               ),
             );
           }
@@ -109,7 +109,7 @@ class TasksScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => AddTaskScreen()),
           );
         },
-        child: const Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add, color: TodoColors.white),
       ),
     );
   }
