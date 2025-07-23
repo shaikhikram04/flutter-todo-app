@@ -24,6 +24,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<UpdateTaskEvent>(_onUpdateTask);
     on<DeleteTaskEvent>(_onDeleteTask);
     on<ToggleTaskCompletion>(_onToggleTaskCompletion);
+    on<SearchTaskEvent>(_onSearchTasks);
   }
 
   Future<void> _onLoadTasks(LoadTasks event, Emitter<TaskState> emit) async {
@@ -72,4 +73,20 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       emit(TaskError(e.toString()));
     }
   }
+
+  void _onSearchTasks(SearchTaskEvent event, Emitter<TaskState> emit) {
+    final currentState = state;
+    if (currentState is TaskLoaded) {
+      if (event.query.trim().isEmpty) {
+        emit(TaskLoaded(currentState.allTasks, filtered: currentState.allTasks));
+      }
+      else {
+        final filtered = currentState.allTasks.where((task) {
+          return task.title.toLowerCase().contains(event.query.toLowerCase());
+        }).toList();
+        emit(TaskLoaded(currentState.allTasks, filtered: filtered));
+      }
+    }
+  }
+
 }

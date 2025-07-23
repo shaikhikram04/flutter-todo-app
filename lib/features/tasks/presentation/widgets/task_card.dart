@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:up_todo/core/utils/constants.dart';
 import 'package:up_todo/features/tasks/domain/entities/task.dart';
 import 'package:up_todo/features/tasks/presentation/bloc/task_bloc.dart';
 import 'package:up_todo/features/tasks/presentation/bloc/task_event.dart';
@@ -11,16 +12,8 @@ class TaskCard extends StatelessWidget {
   const TaskCard({super.key, required this.task});
 
   Color _getCategoryColor(String category) {
-    switch (category.toLowerCase()) {
-      case 'university':
-        return const Color(0xFF8875FF);
-      case 'home':
-        return const Color(0xFFFF4757);
-      case 'work':
-        return const Color(0xFFFFA726);
-      default:
-        return const Color(0xFF8875FF);
-    }
+    final categoryColor =  CategoryConstants.getCategoryByName(category).color;
+    return categoryColor;
   }
 
   @override

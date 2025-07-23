@@ -13,12 +13,14 @@ class TaskInitial extends TaskState {}
 class TaskLoading extends TaskState {}
 
 class TaskLoaded extends TaskState {
-  final List<Task> tasks;
+  final List<Task> allTasks;
+  final List<Task> filteredTasks;
 
-  const TaskLoaded(this.tasks);
+  const TaskLoaded(this.allTasks, {List<Task>? filtered})
+      : filteredTasks = filtered ?? allTasks;
 
   @override
-  List<Object> get props => [tasks];
+  List<Object> get props => [allTasks, filteredTasks];
 }
 
 class TaskError extends TaskState {
@@ -29,3 +31,6 @@ class TaskError extends TaskState {
   @override
   List<Object> get props => [message];
 }
+
+
+

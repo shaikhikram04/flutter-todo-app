@@ -50,6 +50,10 @@ class CategoryConstants {
       color: const Color(0xFF29B6F6), // Light Blue
     ),
   ];
+
+  static CategoryItem getCategoryByName(String categoryName) {
+   return categories.firstWhere((category) => categoryName == category.name, orElse:()=> categories.first);
+  }
 }
 
 class CategoryItem {

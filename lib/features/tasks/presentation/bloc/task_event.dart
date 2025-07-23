@@ -45,3 +45,13 @@ class ToggleTaskCompletion extends TaskEvent {
   @override
   List<Object> get props => [task];
 }
+
+class SearchTaskEvent extends TaskEvent {
+  final String query;
+
+  const SearchTaskEvent(this.query);
+
+  @override
+  List<Object> get props => [query];
+}
+
