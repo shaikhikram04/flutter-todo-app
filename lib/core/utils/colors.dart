@@ -21,6 +21,7 @@ class TodoColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
   static const Color grey = Color(0xFFB0BEC5);
+  static const Color shadow = Color(0xFF333333);
 
   //* category colors
   static const Color work = Color(0xFFff9680);

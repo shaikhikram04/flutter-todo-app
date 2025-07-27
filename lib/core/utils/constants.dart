@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:up_todo/core/utils/colors.dart';
 
 class CategoryConstants {
   const CategoryConstants._();
@@ -7,52 +8,52 @@ class CategoryConstants {
     CategoryItem(
       name: 'Grocery',
       icon: Icons.shopping_cart,
-      color: const Color(0xFF66BB6A), // Green
+      color: TodoColors.grocery,
     ),
     CategoryItem(
       name: 'Work',
       icon: Icons.work,
-      color: const Color(0xFFEF5350), // Red
+      color: TodoColors.work,
     ),
     CategoryItem(
       name: 'Sport',
       icon: Icons.fitness_center,
-      color: const Color(0xFF42A5F5), // Blue
+      color: TodoColors.sport,
     ),
     CategoryItem(
       name: 'Home',
       icon: Icons.home,
-      color: const Color(0xFFE57373), // Light Red
+      color: TodoColors.home,
     ),
     CategoryItem(
       name: 'University',
       icon: Icons.school,
-      color: const Color(0xFF8875FF), // Purple
+      color: TodoColors.university,
     ),
     CategoryItem(
       name: 'Social',
       icon: Icons.people,
-      color: const Color(0xFFAB47BC), // Pink/Purple
+      color: TodoColors.social,
     ),
     CategoryItem(
       name: 'Music',
       icon: Icons.music_note,
-      color: const Color(0xFFBA68C8), // Light Purple
+      color: TodoColors.music,
     ),
     CategoryItem(
       name: 'Health',
       icon: Icons.favorite,
-      color: const Color(0xFF4CAF50), // Green
+      color: TodoColors.health,
     ),
     CategoryItem(
       name: 'Movie',
       icon: Icons.movie,
-      color: const Color(0xFF29B6F6), // Light Blue
+      color: TodoColors.movie,
     ),
   ];
 
   static CategoryItem getCategoryByName(String categoryName) {
-   return categories.firstWhere((category) => categoryName == category.name, orElse:()=> categories.first);
+    return categories.firstWhere((category) => categoryName == category.name, orElse: () => categories.first);
   }
 }
 

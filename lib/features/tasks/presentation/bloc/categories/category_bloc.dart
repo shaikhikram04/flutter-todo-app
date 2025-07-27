@@ -1,65 +1,42 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:up_todo/core/database/database_helper.dart';
+import 'package:up_todo/features/tasks/data/repositories/category_repository_impl.dart';
 
 import '../../../../../core/utils/constants.dart';
+import '../../../domain/entities/category.dart';
 import 'category_event.dart';
 import 'category_state.dart';
 
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
-  List<CategoryItem> _categories = [];
+  final CategoryRepository _categoryRepository;
+  List<Category> _categories = [];
 
-  CategoryBloc() : super(CategoryInitial()) {
+  CategoryBloc(this._categoryRepository) : super(CategoryInitial()) {
     on<LoadCategories>(_onLoadCategories);
     on<AddCategory>(_onAddCategory);
     on<DeleteCategory>(_onDeleteCategory);
     on<UpdateCategory>(_onUpdateCategory);
-  }
-
-  final _dbHelper = DatabaseHelper();
-
-  IconData _getIconFromCodePoint(int codePoint) {
-    // Map common codePoints to const IconData
-    const iconMap = <int, IconData>{
-      0xe047: Icons.category,
-      0xe3c9: Icons.work,
-      0xe7fd: Icons.person,
-      0xe59c: Icons.shopping_cart,
-      0xe53f: Icons.home,
-      0xe558: Icons.school,
-      0xe1b9: Icons.fitness_center,
-      0xe3e8: Icons.restaurant,
-      0xe071: Icons.directions_car,
-      0xe530: Icons.local_hospital,
-      0xe3f4: Icons.music_note,
-      0xe02f: Icons.movie,
-      0xe1a3: Icons.sports,
-      0xe866: Icons.travel_explore,
-      0xe8b6: Icons.pets,
-      0xe84f: Icons.book,
-      0xe90f: Icons.games,
-      0xe3af: Icons.business,
-      0xe8cc: Icons.family_restroom,
-    };
-
-    // Return mapped icon or default category icon
-    return iconMap[codePoint] ?? Icons.category;
+    on<ResetCategories>(_onResetCategories);
+    on<LoadCustomCategories>(_onLoadCustomCategories);
+    on<LoadCategoryUsage>(_onLoadCategoryUsage);
   }
 
   Future<void> _onLoadCategories(LoadCategories event, Emitter<CategoryState> emit) async {
     try {
       emit(CategoryLoading());
 
-      // Load all categories from database (both default and custom)
-      final categoriesFromDb = await _dbHelper.getCategories();
+      // Load all categories from repository
+      _categories = await _categoryRepository.getCategories();
 
-      _categories = categoriesFromDb.map((categoryMap) => CategoryItem(
-        name: categoryMap['name'],
-        icon: _getIconFromCodePoint(categoryMap['iconCodePoint']),
-        color: Color(categoryMap['colorValue']),
-      )).toList();
+      // Convert to CategoryItem for backwards compatibility with UI
+      final categoryItems = _categories
+          .map((category) => CategoryItem(
+                name: category.name,
+                icon: category.icon,
+                color: category.color,
+              ))
+          .toList();
 
-      emit(CategoryLoaded(_categories));
+      emit(CategoryLoaded(categoryItems));
     } catch (e) {
       emit(CategoryError('Failed to load categories: $e'));
     }
@@ -67,17 +44,6 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   Future<void> _onAddCategory(AddCategory event, Emitter<CategoryState> emit) async {
     try {
-      // Check if category already exists
-      final existingCategory = _categories.firstWhere(
-            (category) => category.name.toLowerCase() == event.name.toLowerCase(),
-        orElse: () => CategoryItem(name: '', icon: Icons.error, color: Colors.transparent),
-      );
-
-      if (existingCategory.name.isNotEmpty) {
-        emit(const CategoryError('Category already exists'));
-        return;
-      }
-
       // Validate category name
       if (event.name.trim().isEmpty) {
         emit(const CategoryError('Category name cannot be empty'));
@@ -89,26 +55,33 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
         return;
       }
 
-      // Create new category
-      final newCategory = CategoryItem(
+      // Create new category entity
+      final now = DateTime.now();
+      final newCategory = Category(
         name: event.name.trim(),
         icon: event.icon,
         color: event.color,
+        isCustom: true,
+        createdAt: now,
+        updatedAt: now,
       );
 
-      // Save to database first
-      await _dbHelper.insertCategory(
-          name: newCategory.name,
-          colorValue: newCategory.color.value,
-          iconCodePoint: newCategory.icon.codePoint,
-          isCustom: true
-      );
+      // Add to repository
+      await _categoryRepository.addCategory(newCategory);
 
-      // Add to categories list
-      _categories = [..._categories, newCategory];
+      // Reload categories to get the updated list with IDs
+      _categories = await _categoryRepository.getCategories();
 
-      // Only emit CategoryLoaded with updated list
-      emit(CategoryLoaded(_categories));
+      // Convert to CategoryItem for UI
+      final categoryItems = _categories
+          .map((category) => CategoryItem(
+                name: category.name,
+                icon: category.icon,
+                color: category.color,
+              ))
+          .toList();
+
+      emit(CategoryLoaded(categoryItems));
     } catch (e) {
       emit(CategoryError('Failed to add category: $e'));
     }
@@ -116,21 +89,22 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   Future<void> _onDeleteCategory(DeleteCategory event, Emitter<CategoryState> emit) async {
     try {
-      // Check if it's a default category by checking the database
-      final categoryFromDb = await _dbHelper.getCategoryByName(event.categoryName);
+      // Delete from repository
+      await _categoryRepository.deleteCategory(event.categoryName);
 
-      if (categoryFromDb != null && categoryFromDb['isCustom'] == 0) {
-        emit(const CategoryError('Cannot delete default categories'));
-        return;
-      }
-
-      // Delete from database first
-      await _dbHelper.deleteCategory(event.categoryName);
-
-      // Remove from local list
+      // Update local list
       _categories = _categories.where((category) => category.name != event.categoryName).toList();
 
-      emit(CategoryLoaded(_categories));
+      // Convert to CategoryItem for UI
+      final categoryItems = _categories
+          .map((category) => CategoryItem(
+                name: category.name,
+                icon: category.icon,
+                color: category.color,
+              ))
+          .toList();
+
+      emit(CategoryLoaded(categoryItems));
     } catch (e) {
       emit(CategoryError('Failed to delete category: $e'));
     }
@@ -138,45 +112,115 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 
   Future<void> _onUpdateCategory(UpdateCategory event, Emitter<CategoryState> emit) async {
     try {
-      final categoryIndex = _categories.indexWhere((category) => category.name == event.oldName);
-
-      if (categoryIndex == -1) {
-        emit(const CategoryError('Category not found'));
-        return;
-      }
-
-      // Get category from database to check if it's custom
-      final categoryFromDb = await _dbHelper.getCategoryByName(event.oldName);
-      if (categoryFromDb == null) {
-        emit(const CategoryError('Category not found in database'));
-        return;
-      }
-
-      final oldCategory = _categories[categoryIndex];
-      final updatedCategory = CategoryItem(
-        name: event.newName.trim(),
-        icon: event.newIcon ?? oldCategory.icon,
-        color: event.newColor ?? oldCategory.color,
+      // Find the category to update
+      final categoryToUpdate = _categories.firstWhere(
+        (category) => category.name == event.oldName,
+        orElse: () => throw Exception('Category not found'),
       );
 
-      // Update in database
-      await _dbHelper.updateCategory(
-        id: categoryFromDb['id'],
+      // Create updated category
+      final updatedCategory = categoryToUpdate.copyWith(
         name: event.newName.trim(),
-        iconCodePoint: updatedCategory.icon.codePoint,
-        colorValue: updatedCategory.color.value,
+        icon: event.newIcon,
+        color: event.newColor,
+        updatedAt: DateTime.now(),
       );
+
+      // Update in repository
+      await _categoryRepository.updateCategory(updatedCategory);
 
       // Update local list
-      _categories[categoryIndex] = updatedCategory;
+      final categoryIndex = _categories.indexWhere((category) => category.name == event.oldName);
+      if (categoryIndex != -1) {
+        _categories[categoryIndex] = updatedCategory;
+      }
 
-      emit(CategoryLoaded(_categories));
+      // Convert to CategoryItem for UI
+      final categoryItems = _categories
+          .map((category) => CategoryItem(
+                name: category.name,
+                icon: category.icon,
+                color: category.color,
+              ))
+          .toList();
+
+      emit(CategoryLoaded(categoryItems));
     } catch (e) {
       emit(CategoryError('Failed to update category: $e'));
     }
   }
 
+  Future<void> _onResetCategories(ResetCategories event, Emitter<CategoryState> emit) async {
+    try {
+      emit(CategoryLoading());
 
-  // Getter for current categories
-  List<CategoryItem> get categories => List.unmodifiable(_categories);
+      // Reset categories in repository
+      await _categoryRepository.resetCategoriesToDefault();
+
+      // Reload categories
+      _categories = await _categoryRepository.getCategories();
+
+      // Convert to CategoryItem for UI
+      final categoryItems = _categories
+          .map((category) => CategoryItem(
+                name: category.name,
+                icon: category.icon,
+                color: category.color,
+              ))
+          .toList();
+
+      emit(CategoryLoaded(categoryItems));
+    } catch (e) {
+      emit(CategoryError('Failed to reset categories: $e'));
+    }
+  }
+
+  Future<void> _onLoadCustomCategories(LoadCustomCategories event, Emitter<CategoryState> emit) async {
+    try {
+      emit(CategoryLoading());
+
+      // Load only custom categories
+      final customCategories = await _categoryRepository.getCustomCategories();
+
+      // Convert to CategoryItem for UI
+      final categoryItems = customCategories
+          .map((category) => CategoryItem(
+                name: category.name,
+                icon: category.icon,
+                color: category.color,
+              ))
+          .toList();
+
+      emit(CategoryLoaded(categoryItems));
+    } catch (e) {
+      emit(CategoryError('Failed to load custom categories: $e'));
+    }
+  }
+
+  Future<void> _onLoadCategoryUsage(LoadCategoryUsage event, Emitter<CategoryState> emit) async {
+    try {
+      emit(CategoryLoading());
+
+      // Load category usage statistics
+      final categoryUsage = await _categoryRepository.getCategoryUsage();
+
+      // You might want to create a specific state for category usage
+      // For now, we'll emit as loaded state
+      emit(CategoryUsageLoaded(categoryUsage));
+    } catch (e) {
+      emit(CategoryError('Failed to load category usage: $e'));
+    }
+  }
+
+  // Getter for current categories (maintain backwards compatibility)
+  List<CategoryItem> get categories => _categories
+      .map((category) => CategoryItem(
+            name: category.name,
+            icon: category.icon,
+            color: category.color,
+          ))
+      .toList();
+
+  // Getter for domain entities
+  List<Category> get categoryEntities => List.unmodifiable(_categories);
 }

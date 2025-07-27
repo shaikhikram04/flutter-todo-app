@@ -1,12 +1,7 @@
-import 'package:equatable/equatable.dart';
-
 import '../../../../../core/utils/constants.dart';
 
-abstract class CategoryState extends Equatable {
+abstract class CategoryState {
   const CategoryState();
-
-  @override
-  List<Object?> get props => [];
 }
 
 class CategoryInitial extends CategoryState {}
@@ -19,7 +14,30 @@ class CategoryLoaded extends CategoryState {
   const CategoryLoaded(this.categories);
 
   @override
-  List<Object?> get props => [categories];
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is CategoryLoaded &&
+        other.categories.length == categories.length &&
+        other.categories.every((cat) => categories.any((c) => c.name == cat.name));
+  }
+
+  @override
+  int get hashCode => categories.hashCode;
+}
+
+class CategoryUsageLoaded extends CategoryState {
+  final List<Map<String, dynamic>> categoryUsage;
+
+  const CategoryUsageLoaded(this.categoryUsage);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is CategoryUsageLoaded && other.categoryUsage == categoryUsage;
+  }
+
+  @override
+  int get hashCode => categoryUsage.hashCode;
 }
 
 class CategoryError extends CategoryState {
@@ -28,14 +46,11 @@ class CategoryError extends CategoryState {
   const CategoryError(this.message);
 
   @override
-  List<Object?> get props => [message];
-}
-
-class CategoryAdded extends CategoryState {
-  final CategoryItem addedCategory;
-
-  const CategoryAdded(this.addedCategory);
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is CategoryError && other.message == message;
+  }
 
   @override
-  List<Object?> get props => [addedCategory];
+  int get hashCode => message.hashCode;
 }

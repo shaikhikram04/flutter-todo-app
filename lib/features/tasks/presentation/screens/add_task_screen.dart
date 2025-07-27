@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:up_todo/core/utils/colors.dart';
 import 'package:up_todo/core/utils/constants.dart';
 import 'package:up_todo/features/tasks/presentation/widgets/categories_dialog.dart';
 
@@ -52,7 +53,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFF1E1E1E),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xFF333333)),
+                border: Border.all(color: TodoColors.shadow),
               ),
               child: TextField(
                 controller: _titleController,

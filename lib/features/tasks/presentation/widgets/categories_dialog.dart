@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:up_todo/core/utils/colors.dart';
 
 import '../../../../core/utils/constants.dart';
 import '../bloc/categories/category_bloc.dart';
@@ -17,28 +18,27 @@ class CategoryDialog extends StatelessWidget {
   });
 
   static Future<String?> show(
-      BuildContext context, {
-        String? selectedCategory,
-        required Function(CategoryItem category) onCategorySelected,
-      }) {
+    BuildContext context, {
+    String? selectedCategory,
+    required Function(CategoryItem category) onCategorySelected,
+  }) {
     return showDialog<String>(
       context: context,
       barrierColor: Colors.black.withOpacity(0.7),
-      builder: (context) => BlocProvider(
-        create: (context) => CategoryBloc()..add(LoadCategories()),
-        child: CategoryDialog(
-          selectedCategory: selectedCategory,
-          onCategorySelected: (category) {
-            onCategorySelected(category);
-            Navigator.of(context).pop();
-          },
-        ),
+      builder: (context) => CategoryDialog(
+        selectedCategory: selectedCategory,
+        onCategorySelected: (category) {
+          onCategorySelected(category);
+          Navigator.of(context).pop();
+        },
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    context.read<CategoryBloc>().add(LoadCategories());
+
     return Dialog(
       backgroundColor: const Color(0xFF1E1E1E),
       shape: RoundedRectangleBorder(
@@ -76,7 +76,7 @@ class CategoryDialog extends StatelessWidget {
                 if (state is CategoryLoading) {
                   return const Center(
                     child: CircularProgressIndicator(
-                      color: Color(0xFF8875FF),
+                      color: TodoColors.primary,
                     ),
                   );
                 }
@@ -188,17 +188,19 @@ class CategoryDialog extends StatelessWidget {
                   Icons.bookmark,
                   Icons.lightbulb,
                   Icons.celebration,
-                ].map((icon) => GestureDetector(
-                  onTap: () => setState(() => selectedIcon = icon),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: selectedIcon == icon ? selectedColor : Colors.grey.shade800,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 20),
-                  ),
-                )).toList(),
+                ]
+                    .map((icon) => GestureDetector(
+                          onTap: () => setState(() => selectedIcon = icon),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: selectedIcon == icon ? selectedColor : Colors.grey.shade800,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(icon, color: Colors.white, size: 20),
+                          ),
+                        ))
+                    .toList(),
               ),
               const SizedBox(height: 20),
 
@@ -216,20 +218,20 @@ class CategoryDialog extends StatelessWidget {
                   const Color(0xFFEF5350),
                   const Color(0xFF42A5F5),
                   const Color(0xFFAB47BC),
-                ].map((color) => GestureDetector(
-                  onTap: () => setState(() => selectedColor = color),
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      border: selectedColor == color
-                          ? Border.all(color: Colors.white, width: 2)
-                          : null,
-                    ),
-                  ),
-                )).toList(),
+                ]
+                    .map((color) => GestureDetector(
+                          onTap: () => setState(() => selectedColor = color),
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              border: selectedColor == color ? Border.all(color: Colors.white, width: 2) : null,
+                            ),
+                          ),
+                        ))
+                    .toList(),
               ),
             ],
           ),
@@ -247,12 +249,12 @@ class CategoryDialog extends StatelessWidget {
                 if (categoryName.isNotEmpty) {
                   // Use the original context (from the CategoryDialog) to access the BLoC
                   context.read<CategoryBloc>().add(
-                    AddCategory(
-                      name: categoryName,
-                      icon: selectedIcon,
-                      color: selectedColor,
-                    ),
-                  );
+                        AddCategory(
+                          name: categoryName,
+                          icon: selectedIcon,
+                          color: selectedColor,
+                        ),
+                      );
                   Navigator.pop(dialogContext);
                 } else {
                   // Show error for empty name
@@ -299,12 +301,12 @@ class _CategoryCard extends StatelessWidget {
           border: isSelected ? Border.all(color: Colors.white, width: 3) : null,
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: category.color.withOpacity(0.4),
-              blurRadius: 8,
-              spreadRadius: 2,
-            ),
-          ]
+                  BoxShadow(
+                    color: category.color.withOpacity(0.4),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  ),
+                ]
               : null,
         ),
         child: Column(

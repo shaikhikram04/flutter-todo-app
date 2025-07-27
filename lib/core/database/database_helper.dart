@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:up_todo/core/utils/colors.dart';
 
 class DatabaseHelper {
   static Database? _database;
@@ -79,7 +80,7 @@ class DatabaseHelper {
       {
         'name': 'Grocery',
         'iconCodePoint': Icons.shopping_cart.codePoint,
-        'colorValue': const Color(0xFF66BB6A).value,
+        'colorValue': TodoColors.grocery.value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
@@ -87,7 +88,7 @@ class DatabaseHelper {
       {
         'name': 'Work',
         'iconCodePoint': Icons.work.codePoint,
-        'colorValue': const Color(0xFFEF5350).value,
+        'colorValue': TodoColors.work.value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
@@ -95,7 +96,7 @@ class DatabaseHelper {
       {
         'name': 'Sport',
         'iconCodePoint': Icons.fitness_center.codePoint,
-        'colorValue': const Color(0xFF42A5F5).value,
+        'colorValue': TodoColors.sport.value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
@@ -103,7 +104,7 @@ class DatabaseHelper {
       {
         'name': 'Home',
         'iconCodePoint': Icons.home.codePoint,
-        'colorValue': const Color(0xFFE57373).value,
+        'colorValue': TodoColors.home.value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
@@ -111,7 +112,7 @@ class DatabaseHelper {
       {
         'name': 'University',
         'iconCodePoint': Icons.school.codePoint,
-        'colorValue': const Color(0xFF8875FF).value,
+        'colorValue': TodoColors.university.value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
@@ -119,7 +120,7 @@ class DatabaseHelper {
       {
         'name': 'Social',
         'iconCodePoint': Icons.people.codePoint,
-        'colorValue': const Color(0xFFAB47BC).value,
+        'colorValue': TodoColors.social.value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
@@ -127,7 +128,7 @@ class DatabaseHelper {
       {
         'name': 'Music',
         'iconCodePoint': Icons.music_note.codePoint,
-        'colorValue': const Color(0xFFBA68C8).value,
+        'colorValue': TodoColors.music.value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
@@ -135,7 +136,7 @@ class DatabaseHelper {
       {
         'name': 'Health',
         'iconCodePoint': Icons.favorite.codePoint,
-        'colorValue': const Color(0xFF4CAF50).value,
+        'colorValue': TodoColors.health.value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
@@ -143,7 +144,7 @@ class DatabaseHelper {
       {
         'name': 'Movie',
         'iconCodePoint': Icons.movie.codePoint,
-        'colorValue': const Color(0xFF29B6F6).value,
+        'colorValue': TodoColors.movie.value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),

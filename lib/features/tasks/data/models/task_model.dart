@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+
 import '../../domain/entities/task.dart';
 
 class TaskModel extends Task {
@@ -35,6 +36,4 @@ class TaskModel extends Task {
       'createdAt': createdAt.toIso8601String(),
     };
   }
-
-
 }

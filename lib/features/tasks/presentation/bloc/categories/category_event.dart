@@ -1,14 +1,14 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-abstract class CategoryEvent extends Equatable {
+abstract class CategoryEvent {
   const CategoryEvent();
-
-  @override
-  List<Object?> get props => [];
 }
 
 class LoadCategories extends CategoryEvent {}
+
+class LoadCustomCategories extends CategoryEvent {}
+
+class LoadCategoryUsage extends CategoryEvent {}
 
 class AddCategory extends CategoryEvent {
   final String name;
@@ -20,18 +20,6 @@ class AddCategory extends CategoryEvent {
     required this.icon,
     required this.color,
   });
-
-  @override
-  List<Object?> get props => [name, icon, color];
-}
-
-class DeleteCategory extends CategoryEvent {
-  final String categoryName;
-
-  const DeleteCategory(this.categoryName);
-
-  @override
-  List<Object?> get props => [categoryName];
 }
 
 class UpdateCategory extends CategoryEvent {
@@ -46,7 +34,12 @@ class UpdateCategory extends CategoryEvent {
     this.newIcon,
     this.newColor,
   });
-
-  @override
-  List<Object?> get props => [oldName, newName, newIcon, newColor];
 }
+
+class DeleteCategory extends CategoryEvent {
+  final String categoryName;
+
+  const DeleteCategory(this.categoryName);
+}
+
+class ResetCategories extends CategoryEvent {}
