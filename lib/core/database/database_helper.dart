@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static Database? _database;
-  static const String tasksTableName  = 'tasks';
+  static const String tasksTableName = 'tasks';
   static const String categoriesTableName = 'categories';
   static const int _databaseVersion = 2;
 
@@ -142,7 +142,7 @@ class DatabaseHelper {
       },
       {
         'name': 'Movie',
-        'iconCodePoint':  Icons.movie.codePoint,
+        'iconCodePoint': Icons.movie.codePoint,
         'colorValue': const Color(0xFF29B6F6).value,
         'isCustom': 0,
         'createdAt': DateTime.now().toIso8601String(),
@@ -362,16 +362,19 @@ class DatabaseHelper {
     final db = await database;
 
     final taskCount = Sqflite.firstIntValue(
-      await db.rawQuery('SELECT COUNT(*) FROM $tasksTableName'),
-    ) ?? 0;
+          await db.rawQuery('SELECT COUNT(*) FROM $tasksTableName'),
+        ) ??
+        0;
 
     final categoryCount = Sqflite.firstIntValue(
-      await db.rawQuery('SELECT COUNT(*) FROM $categoriesTableName'),
-    ) ?? 0;
+          await db.rawQuery('SELECT COUNT(*) FROM $categoriesTableName'),
+        ) ??
+        0;
 
     final customCategoryCount = Sqflite.firstIntValue(
-      await db.rawQuery('SELECT COUNT(*) FROM $categoriesTableName WHERE isCustom = 1'),
-    ) ?? 0;
+          await db.rawQuery('SELECT COUNT(*) FROM $categoriesTableName WHERE isCustom = 1'),
+        ) ??
+        0;
 
     return {
       'totalTasks': taskCount,

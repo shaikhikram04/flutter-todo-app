@@ -5,8 +5,8 @@ import 'package:up_todo/core/utils/constants.dart';
 import 'package:up_todo/features/tasks/presentation/widgets/categories_dialog.dart';
 
 import '../../domain/entities/task.dart';
-import '../bloc/task_bloc.dart';
-import '../bloc/task_event.dart';
+import '../bloc/tasks/task_bloc.dart';
+import '../bloc/tasks/task_event.dart';
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});

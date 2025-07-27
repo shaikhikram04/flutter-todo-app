@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/task.dart';
-import 'task_event.dart';
+import 'package:up_todo/features/tasks/data/models/task_filter.dart';
+import '../../../domain/entities/task.dart';
 
 abstract class TaskState extends Equatable {
   const TaskState();

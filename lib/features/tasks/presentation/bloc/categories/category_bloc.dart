@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:up_todo/core/database/database_helper.dart';
 
-import '../../../../core/utils/constants.dart';
+import '../../../../../core/utils/constants.dart';
 import 'category_event.dart';
 import 'category_state.dart';
 

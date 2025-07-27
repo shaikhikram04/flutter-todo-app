@@ -1,12 +1,10 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:up_todo/features/tasks/data/models/task_filter.dart';
+
 import '../../../../core/utils/constants.dart';
-import '../bloc/task_bloc.dart';
-import '../bloc/task_event.dart';
-import '../bloc/task_state.dart';
-
-
+import '../bloc/tasks/task_bloc.dart';
+import '../bloc/tasks/task_event.dart';
 
 class FilterBottomSheet extends StatefulWidget {
   final TaskFilter currentFilter;
@@ -85,31 +83,31 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               _buildFilterChip(
                 '1 (Highest)',
                 _tempFilter.priority == 1,
-                    () => _updatePriority(1),
+                () => _updatePriority(1),
                 color: Colors.red,
               ),
               _buildFilterChip(
                 '2 (High)',
                 _tempFilter.priority == 2,
-                    () => _updatePriority(2),
+                () => _updatePriority(2),
                 color: Colors.orange,
               ),
               _buildFilterChip(
                 '3 (Medium)',
                 _tempFilter.priority == 3,
-                    () => _updatePriority(3),
+                () => _updatePriority(3),
                 color: Colors.yellow,
               ),
               _buildFilterChip(
                 '4 (Low)',
                 _tempFilter.priority == 4,
-                    () => _updatePriority(4),
+                () => _updatePriority(4),
                 color: Colors.green,
               ),
               _buildFilterChip(
                 '5 (Lowest)',
                 _tempFilter.priority == 5,
-                    () => _updatePriority(5),
+                () => _updatePriority(5),
                 color: Colors.blue,
               ),
             ],
@@ -126,7 +124,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               return _buildFilterChip(
                 categoryItem.name,
                 isSelected,
-                    () => _updateCategory(categoryItem.name),
+                () => _updateCategory(categoryItem.name),
                 color: categoryItem.color,
               );
             }).toList(),
@@ -142,27 +140,27 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               _buildFilterChip(
                 'Today',
                 _tempFilter.dateFilter == DateFilterType.today,
-                    () => _updateDateFilter(DateFilterType.today),
+                () => _updateDateFilter(DateFilterType.today),
               ),
               _buildFilterChip(
                 'Tomorrow',
                 _tempFilter.dateFilter == DateFilterType.tomorrow,
-                    () => _updateDateFilter(DateFilterType.tomorrow),
+                () => _updateDateFilter(DateFilterType.tomorrow),
               ),
               _buildFilterChip(
                 'This Week',
                 _tempFilter.dateFilter == DateFilterType.thisWeek,
-                    () => _updateDateFilter(DateFilterType.thisWeek),
+                () => _updateDateFilter(DateFilterType.thisWeek),
               ),
               _buildFilterChip(
                 'This Month',
                 _tempFilter.dateFilter == DateFilterType.thisMonth,
-                    () => _updateDateFilter(DateFilterType.thisMonth),
+                () => _updateDateFilter(DateFilterType.thisMonth),
               ),
               _buildFilterChip(
                 'Overdue',
                 _tempFilter.dateFilter == DateFilterType.overdue,
-                    () => _updateDateFilter(DateFilterType.overdue),
+                () => _updateDateFilter(DateFilterType.overdue),
                 color: Colors.red,
               ),
             ],
@@ -180,29 +178,21 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     : const Color(0xFF333333),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: _tempFilter.dateFilter == DateFilterType.specific
-                      ? Colors.blue
-                      : Colors.grey,
+                  color: _tempFilter.dateFilter == DateFilterType.specific ? Colors.blue : Colors.grey,
                 ),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.calendar_today,
-                    color: _tempFilter.dateFilter == DateFilterType.specific
-                        ? Colors.blue
-                        : Colors.grey,
+                    color: _tempFilter.dateFilter == DateFilterType.specific ? Colors.blue : Colors.grey,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    _selectedDate != null
-                        ? 'Selected: ${_formatDate(_selectedDate!)}'
-                        : 'Pick specific date',
+                    _selectedDate != null ? 'Selected: ${_formatDate(_selectedDate!)}' : 'Pick specific date',
                     style: TextStyle(
-                      color: _tempFilter.dateFilter == DateFilterType.specific
-                          ? Colors.blue
-                          : Colors.grey,
+                      color: _tempFilter.dateFilter == DateFilterType.specific ? Colors.blue : Colors.grey,
                     ),
                   ),
                 ],
@@ -257,19 +247,17 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Widget _buildFilterChip(
-      String label,
-      bool isSelected,
-      VoidCallback onTap, {
-        Color? color,
-      }) {
+    String label,
+    bool isSelected,
+    VoidCallback onTap, {
+    Color? color,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? (color ?? Colors.blue).withOpacity(0.2)
-              : const Color(0xFF333333),
+          color: isSelected ? (color ?? Colors.blue).withOpacity(0.2) : const Color(0xFF333333),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? (color ?? Colors.blue) : Colors.grey,

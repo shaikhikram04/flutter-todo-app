@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:up_todo/core/utils/colors.dart';
-import 'package:up_todo/features/tasks/presentation/bloc/task_bloc.dart';
-import 'package:up_todo/features/tasks/presentation/bloc/task_state.dart';
+import 'package:up_todo/features/tasks/data/models/task_filter.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_bloc.dart';
+import 'package:up_todo/features/tasks/presentation/bloc/tasks/task_state.dart';
 import 'package:up_todo/features/tasks/presentation/screens/add_task_screen.dart';
 import 'package:up_todo/features/tasks/presentation/widgets/no_task.dart';
 import 'package:up_todo/features/tasks/presentation/widgets/task_card.dart';
 
 import '../../../../core/utils/constants.dart';
-import '../bloc/task_event.dart';
+import '../bloc/tasks/task_event.dart';
 import '../widgets/filter_bottomsheet.dart';
 
 class TasksScreen extends StatelessWidget {

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/constants.dart';
-import '../bloc/category_bloc.dart';
-import '../bloc/category_event.dart';
-import '../bloc/category_state.dart';
+import '../bloc/categories/category_bloc.dart';
+import '../bloc/categories/category_event.dart';
+import '../bloc/categories/category_state.dart';
 
 class CategoryDialog extends StatelessWidget {
   final String? selectedCategory;
