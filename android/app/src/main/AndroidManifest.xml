@@ -3,7 +3,7 @@
         android:maxSdkVersion="28" />
 
     <application
-        android:label="up_todo"
+        android:label="Up ToDo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
